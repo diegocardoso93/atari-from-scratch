@@ -1,0 +1,18 @@
+[package]
+name = "atari-from-scratch"
+version = "0.1.0"
+authors = ["diego <dieg0card0s0@hotmail.com>"]
+edition = "2018"
+
+[features]
+default = ["stdweb"]
+stdweb = ["gestalt/stdweb", "platter/stdweb", "blinds/stdweb", "golem/stdweb","instant/stdweb"]
+
+[dependencies]
+quicksilver = "0.4.0-alpha0.5"
+blinds = { version = "0.1.4", default-features = false, features = ["gl", "image"] }
+gestalt = { version = "0.1", optional = true }
+golem = { version = "0.1.3", features = ["std"] }
+image = { version = "0.22", default-features = false, features = ["png_codec", "jpeg"] }
+instant = "0.1.2"
+platter = "0.1"
