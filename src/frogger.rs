@@ -1,9 +1,41 @@
 use quicksilver::{
-    geom::{Rectangle, Triangle, Vector},
+    geom::{Rectangle, Vector},
     graphics::Color,
     input::Key,
     run, Graphics, Input, Result, Settings, Timer, Window
 };
+
+enum Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+}
+
+enum FloatPlatform {
+    TRUNK1,
+    TRUNK2
+}
+
+enum VehicleType {
+    TRUCK1,
+    CAR2,
+    CAR3,
+    CAR4,
+    CAR5
+}
+
+struct Frogger {
+    pos: (f32, f32),
+    timebar: f32,
+    vehicles: Vec<Vehicle>
+}
+
+struct Vehicle {
+    pos: (f32, f32),
+    movement: Direction,
+    class: VehicleType
+}
 
 pub fn start() {
     run(
@@ -29,16 +61,16 @@ async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> 
         
         while update_timer.tick() {
             if input.key_down(Key::W) {
-                frogger.move_frog(0);
+                frogger.move_frog(Direction::UP);
             }
             if input.key_down(Key::D) {
-                frogger.move_frog(1);
+                frogger.move_frog(Direction::RIGHT);
             }
             if input.key_down(Key::S) {
-                frogger.move_frog(2);
+                frogger.move_frog(Direction::DOWN);
             }
             if input.key_down(Key::A) {
-                frogger.move_frog(3);
+                frogger.move_frog(Direction::LEFT);
             }
             frogger.timebar -= 0.25;
         }
@@ -49,12 +81,7 @@ async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> 
             frogger.draw_river(&mut gfx);
             frogger.draw_street(&mut gfx);
             frogger.draw_frog(&mut gfx);
-
-            frogger.draw_truck1(&mut gfx);
-            frogger.draw_car2(&mut gfx);
-            frogger.draw_car3(&mut gfx);
-            frogger.draw_car4(&mut gfx);
-            frogger.draw_car5(&mut gfx);
+            frogger.draw_vehicles(&mut gfx);
 
             frogger.draw_trunk1(&mut gfx);
             frogger.draw_trunk2(&mut gfx);
@@ -68,16 +95,220 @@ async fn app(window: Window, mut gfx: Graphics, mut input: Input) -> Result<()> 
     }
 }
 
-struct Frogger {
-    player_pos: (f32, f32),
-    timebar: f32
+impl Vehicle {
+    pub fn new(pos: (f32, f32), movement: Direction, class: VehicleType) -> Self {
+        Self {
+            pos: pos,
+            movement: movement,
+            class: class
+        }
+    }
+
+    fn draw(&self, gfx: &mut Graphics) {
+        match self.class {
+            VehicleType::TRUCK1 => Self::draw_truck1(gfx),
+            VehicleType::CAR2 => Self::draw_car2(gfx),
+            VehicleType::CAR3 => Self::draw_car3(gfx),
+            VehicleType::CAR4 => Self::draw_car4(gfx),
+            VehicleType::CAR5 => Self::draw_car5(gfx),
+            _ => ()
+        }
+    }
+
+    fn draw_truck1(gfx: &mut Graphics) {
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 269.0), Vector::new(28.0, 12.0)),
+            Color::WHITE
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(608.0, 267.0), Vector::new(10.0, 16.0)),
+            Color::WHITE
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(628.0, 267.0), Vector::new(45.0, 16.0)),
+            Color::WHITE
+        );
+    }
+
+    fn draw_car2(gfx: &mut Graphics) {
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 297.0), Vector::new(36.0, 16.0)),
+            Color::from_hex("cc69bd")
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(609.0, 297.0), Vector::new(14.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(632.0, 297.0), Vector::new(12.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 299.0), Vector::new(36.0, 2.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 308.0), Vector::new(36.0, 2.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(609.0, 303.0), Vector::new(14.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(609.0, 310.0), Vector::new(14.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(632.0, 310.0), Vector::new(14.0, 3.0)),
+            Color::BLACK
+        );
+    }
+
+    fn draw_car3(gfx: &mut Graphics) {
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 326.0), Vector::new(36.0, 16.0)),
+            Color::from_hex("4b6d23")
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 326.0), Vector::new(5.0, 2.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(612.0, 326.0), Vector::new(10.0, 2.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(609.0, 330.0), Vector::new(13.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(613.0, 333.0), Vector::new(9.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(609.0, 335.0), Vector::new(13.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 340.0), Vector::new(5.0, 2.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(612.0, 340.0), Vector::new(10.0, 2.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(632.0, 326.0), Vector::new(6.0, 4.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(632.0, 332.0), Vector::new(6.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(632.0, 338.0), Vector::new(6.0, 4.0)),
+            Color::BLACK
+        );
+    }
+
+    fn draw_car4(gfx: &mut Graphics) {
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 356.0), Vector::new(36.0, 16.0)),
+            Color::from_hex("915ac3")
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 358.0), Vector::new(4.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 367.0), Vector::new(4.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(626.0, 356.0), Vector::new(5.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(622.0, 357.0), Vector::new(9.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(622.0, 362.0), Vector::new(9.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(622.0, 362.0), Vector::new(9.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(622.0, 367.0), Vector::new(9.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(627.0, 369.0), Vector::new(4.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(606.0, 362.0), Vector::new(9.0, 3.0)),
+            Color::BLACK
+        );
+    }
+
+    fn draw_car5(gfx: &mut Graphics) {
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 386.0), Vector::new(36.0, 16.0)),
+            Color::from_hex("a57924")
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 386.0), Vector::new(6.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(614.0, 386.0), Vector::new(12.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 388.0), Vector::new(36.0, 2.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(614.0, 392.0), Vector::new(14.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 398.0), Vector::new(36.0, 2.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(600.0, 400.0), Vector::new(6.0, 3.0)),
+            Color::BLACK
+        );
+        gfx.fill_rect(
+            &Rectangle::new(Vector::new(614.0, 400.0), Vector::new(12.0, 3.0)),
+            Color::BLACK
+        );
+    }
 }
 
 impl Frogger {
     pub fn new() -> Self {
         Self {
-            player_pos: (384 as f32, 410 as f32),
-            timebar: 100.0
+            pos: (384 as f32, 410 as f32),
+            timebar: 100.0,
+            vehicles: vec![
+                Vehicle { pos: (10.0, 10.0), movement: Direction::LEFT, class: VehicleType::TRUCK1 },
+                Vehicle { pos: (10.0, 10.0), movement: Direction::RIGHT, class: VehicleType::CAR2 },
+                Vehicle { pos: (10.0, 10.0), movement: Direction::LEFT, class: VehicleType::CAR3 },
+                Vehicle { pos: (10.0, 10.0), movement: Direction::RIGHT, class: VehicleType::CAR4 },
+                Vehicle { pos: (10.0, 10.0), movement: Direction::LEFT, class: VehicleType::CAR5 },
+            ],
+        }
+    }
+
+    fn draw_vehicles(&self, gfx: &mut Graphics) {
+        for vehicle in self.vehicles.iter() {
+            vehicle.draw(gfx);
         }
     }
 
@@ -136,8 +367,8 @@ impl Frogger {
     }
 
     fn draw_frog(&self, gfx: &mut Graphics) {
-        let x = self.player_pos.0;
-        let y = self.player_pos.1;
+        let x = self.pos.0;
+        let y = self.pos.1;
         gfx.fill_rect(
             &Rectangle::new(Vector::new(x - 15.0, y + 4.0), Vector::new(6.0, 6.0)),
             Color::from_hex("4d712d")
@@ -178,181 +409,6 @@ impl Frogger {
         gfx.fill_rect(
             &Rectangle::new(Vector::new(x, y + 15.0), Vector::new(6.0, 6.0)),
             Color::from_hex("4d712d")
-        );
-    }
-
-    fn draw_truck1(&self, gfx: &mut Graphics) {
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 269.0), Vector::new(28.0, 12.0)),
-            Color::WHITE
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(608.0, 267.0), Vector::new(10.0, 16.0)),
-            Color::WHITE
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(628.0, 267.0), Vector::new(45.0, 16.0)),
-            Color::WHITE
-        );
-    }
-
-    fn draw_car2(&self, gfx: &mut Graphics) {
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 297.0), Vector::new(36.0, 16.0)),
-            Color::from_hex("cc69bd")
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(609.0, 297.0), Vector::new(14.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(632.0, 297.0), Vector::new(12.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 299.0), Vector::new(36.0, 2.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 308.0), Vector::new(36.0, 2.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(609.0, 303.0), Vector::new(14.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(609.0, 310.0), Vector::new(14.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(632.0, 310.0), Vector::new(14.0, 3.0)),
-            Color::BLACK
-        );
-    }
-
-    fn draw_car3(&self, gfx: &mut Graphics) {
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 326.0), Vector::new(36.0, 16.0)),
-            Color::from_hex("4b6d23")
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 326.0), Vector::new(5.0, 2.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(612.0, 326.0), Vector::new(10.0, 2.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(609.0, 330.0), Vector::new(13.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(613.0, 333.0), Vector::new(9.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(609.0, 335.0), Vector::new(13.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 340.0), Vector::new(5.0, 2.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(612.0, 340.0), Vector::new(10.0, 2.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(632.0, 326.0), Vector::new(6.0, 4.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(632.0, 332.0), Vector::new(6.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(632.0, 338.0), Vector::new(6.0, 4.0)),
-            Color::BLACK
-        );
-    }
-
-    fn draw_car4(&self, gfx: &mut Graphics) {
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 356.0), Vector::new(36.0, 16.0)),
-            Color::from_hex("915ac3")
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 358.0), Vector::new(4.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 367.0), Vector::new(4.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(626.0, 356.0), Vector::new(5.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(622.0, 357.0), Vector::new(9.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(622.0, 362.0), Vector::new(9.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(622.0, 362.0), Vector::new(9.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(622.0, 367.0), Vector::new(9.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(627.0, 369.0), Vector::new(4.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(606.0, 362.0), Vector::new(9.0, 3.0)),
-            Color::BLACK
-        );
-    }
-
-    fn draw_car5(&self, gfx: &mut Graphics) {
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 386.0), Vector::new(36.0, 16.0)),
-            Color::from_hex("a57924")
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 386.0), Vector::new(6.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(614.0, 386.0), Vector::new(12.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 388.0), Vector::new(36.0, 2.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(614.0, 392.0), Vector::new(14.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 398.0), Vector::new(36.0, 2.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(600.0, 400.0), Vector::new(6.0, 3.0)),
-            Color::BLACK
-        );
-        gfx.fill_rect(
-            &Rectangle::new(Vector::new(614.0, 400.0), Vector::new(12.0, 3.0)),
-            Color::BLACK
         );
     }
 
@@ -440,18 +496,13 @@ impl Frogger {
         );
     }
 
-    fn move_frog(&mut self, direction: u8) {
-        if direction == 0 {
-            self.player_pos.1 -= 30.0;
-        }
-        if direction == 1 {
-            self.player_pos.0 += 30.0;
-        }
-        if direction == 2 {
-            self.player_pos.1 += 30.0;
-        }
-        if direction == 3 {
-            self.player_pos.0 -= 30.0;
+    fn move_frog(&mut self, direction: Direction) {
+        match direction {
+            Direction::UP => self.pos.1 -= 30.0,
+            Direction::DOWN => self.pos.1 += 30.0,
+            Direction::LEFT => self.pos.0 -= 30.0,
+            Direction::RIGHT => self.pos.0 += 30.0,
+            _ => ()
         }
     }
 
